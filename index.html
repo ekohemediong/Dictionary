@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="description" content="A web dictionary for your daily use"/>
+    <meta name="author" content="Emediong Ekoh"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Koulen&display=swap" rel="stylesheet">
+<style>
+   body {
+    padding:0;
+    margin:0;
+    /*background:#330000;*/
+    background:floralwhite;
+}
+@keyframes rotate{
+    0%{
+    transform:rotate(0deg);
+     }
+    10%{
+     transform:rotate(20deg);
+     }
+     20%{
+     transform:rotate(60deg);
+     }
+     30%{
+     transform:rotate(100deg);
+     }
+     40%{
+     transform:rotate(140deg);
+     }
+     50%{
+     transform:rotate(180deg);
+     }
+     60%{
+     transform:rotate(200deg);
+     }
+     70%{
+     transform:rotate(240deg);
+     }
+     80%{
+     transform:rotate(300deg);
+     }
+     90%{
+     transform:rotate(340deg);
+     }
+     100%{
+     transform:rotate(360deg);
+     }
+    
+}
+#percent{
+    font-size:1rem;
+    text-align:center;
+    opacity:0.3;
+    color:orange;
+}
+
+#loader{
+    margin:40% auto 0 auto;
+    box-sizing:border-box;
+    width:6rem;
+    height:6rem;
+    background:floralwhite;
+    border-top:2px solid red;
+    border-radius:3rem;
+    animation:rotate 2s ease-in-out 0s normal infinite;
+    
+}
+/* #loader2{
+    margin:1rem auto 0 auto;
+    box-sizing:border-box;
+    width:6rem;
+    height:6rem;
+    background:#996300;
+    border-top:2px solid #ffdb99;
+    border-radius:3rem;
+    animation:rotate 2s ease-in-out 0s normal infinite;
+}
+#loader2Con{
+    display:none;
+}
+#load{
+    text-align:center;
+    font-size:1rem;
+    color:#ffdb99;
+    opacity:0.5;
+}*/
+#father{
+    display:block;
+}
+#headWord{
+    color:#ffdb99;
+    text-align:center;
+    font-family: 'Koulen', cursive;
+}
+#dictionaryBody{
+    background:#996300;
+    margin:0.8rem;
+    padding:0.5rem 0.8rem;
+    box-shadow:0rem 0rem 0.4rem black;
+    border-radius:0.2rem;
+    display:none;
+}
+#forms{
+    text-align:center;
+}
+#search{
+ width:60%;   
+ height:2rem;
+ box-sizing:border-box;
+ border:0.1rem solid #ffdb99;
+ border-radius:0.5rem 0 0 0.5rem;
+ outline:none;
+ padding:0.5rem 0.5rem;
+ font-weight:700;
+ font-family: 'Oswald', sans-serif;
+}
+#search:hover{
+    box-shadow:0rem 0rem 0.5rem #ffdb99,inset 0rem 0rem 0.5rem #ffdb99;
+    
+}
+
+#btn{
+width:30%;
+height:2rem;
+box-sizing:border-box;
+border-radius:0 0.5rem 0.5rem 0;
+outline:none;
+border:none;
+background:#ffdb99;
+font-weight:700;
+box-shadow:0rem 0rem 0.4rem black;
+font-family: 'Oswald', sans-serif;
+}
+#word,#pronounced,#partOfSpeech,#example,#definition{
+    color:#ffdb99;
+    font-family: 'Oswald', sans-serif;
+}
+#audio{
+width:30%;
+height:2rem;
+box-sizing:border-box;
+outline:none;
+border:none;
+background:#ffdb99;
+font-weight:700;
+box-shadow:0rem 0rem 0.4rem black;
+transform:skew(5deg);
+font-family: 'Oswald', sans-serif;
+}
+    
+</style>
+        <title>My dictionary</title>
+    </head>
+    <body>
+    <div id="father">
+        <div id='loader'>
+          
+        </div>
+        <div id="percentCon">
+          <p id="percent">loading...</p>
+        </div>
+    </div>
+    <div id="dictionaryBody">
+         
+         <div>
+             <h1 id="headWord">Dictionary</h1>
+         </div>
+         <div id="forms">
+         <input type="search" value="hello"id="search" />
+         <button id="btn" onclick="search()">search</button>
+         </div>
+    <!--    <div id="loader2Con">
+         <div id='loader2'>
+          
+        </div>
+        <h2 id="load">loading...</h2>
+        </div>-->
+    <div id="special">
+         <div>
+             <h2 id="word">Word</h2>
+         </div>
+         <div>
+              <h3 id="pronounced">pronounced</h3>
+         </div>   
+         <div>
+              <h3 id="partOfSpeech">partOfSpeech</h3>
+         </div>  
+         <div>
+              <h3 id="definition">definition</h3>
+         </div>
+         <div>
+              <h3 id="example">example</h3>
+         </div>
+         <div>
+             <button id="audio" onclick='sounds()'>Audio</button>
+         </div>
+        </div>
+     </div>
+    <script>
+       this.onload=()=>{
+document.getElementById("father").style.display="none";
+document.getElementById("dictionaryBody").style.display="block";
+search();
+}
+
+var file;
+var search=async ()=>{
+var key=
+document.getElementById("search").value;
+var url=`https://api.dictionaryapi.dev/api/v2/entries/en/${key}`;
+var response= await fetch(url);
+if(response.ok===false){
+alert("Word not found");
+}
+var receive= await response.json();
+var ourValue=receive[0].word;
+var pronounce=receive[0].phonetics[1].text;
+var speech=receive[0].meanings[0].partOfSpeech;
+var definition=receive[0].meanings[0].definitions[0].definition;
+var sample=receive[0].meanings[0].definitions[0].example;
+file=receive[0].phonetics[0].audio;
+document.getElementById("word").innerHTML=`Word  : ${ourValue}`;
+document.getElementById("pronounced").innerHTML=`Pronounced as : ${pronounce}`;
+document.getElementById("partOfSpeech").innerHTML=`Part of speech  : ${speech}`;
+document.getElementById("definition").innerHTML=`definition : ${definition}`;
+document.getElementById("example").innerHTML=` Example : ${sample}`;
+
+}
+
+search().catch((error)=>{
+   /* console.log(error);*/
+});
+var sounds=()=>{
+var sound = new Audio(file);
+sound.play();
+}
+/*document.getElementById("audio").onclick=sounds;*/
+    </script>
+    </body>
+</html>
